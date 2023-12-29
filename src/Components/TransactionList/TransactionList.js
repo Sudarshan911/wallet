@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import './TransactionList.css'
 
 export default function TransactionsList() {
     const { walletId } = useParams();
@@ -75,12 +76,12 @@ export default function TransactionsList() {
     };
 
     return (
-        <div className="container mt-5 ">
+        <div className="container mt-5">
             
             <div className="d-flex justify-content-end m-3">
                 
             <div className="m-2 align-bottom">
-              <p className='text-primary font-weight-bold'>Sort and OrderBy</p>  
+              <p className='text-info font-weight-bold'>Sort and OrderBy</p>  
                 </div>
                 <div className="m-2">
                     <select value={sortBy} onChange={handleSortByChange}>
@@ -97,7 +98,7 @@ export default function TransactionsList() {
 
                 <div className="m-2 align-bottom">
 
-                    <p className='text-primary font-weight-bold'>Limit</p>  
+                    <p className='text-info font-weight-bold'>Limit</p>  
                     </div>
                 <div className="m-2">
                     <select value={limit} onChange={handleLimitChange}>
@@ -110,7 +111,7 @@ export default function TransactionsList() {
             </div>
 
             <h2 className='text-center mb-3 text-warning'>Transactions History</h2>
-            <table className="table">
+            <table className="table table-striped table-responsive">
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -133,18 +134,16 @@ export default function TransactionsList() {
                         </tr>
                     ))}
                 </tbody>
-                <tfoot>
-                    <tr className='d-flex'>
-                        <div className='column'>
+            </table>
+            <tr className='d-flex bg-secondary justify-content-center'>
+                        <div className='column m-2'>
                             <button type="button" className="btn btn-primary" onClick={previousPage} disabled={currentPage <= 1}>Previous</button>
                         </div>
-                        <div className='p-t-3'>  <span>  {currentPage} of {totalPages} </span></div>
-                        <div className='column'>
+                        <div className='pt-2 m-2'>  <span>  {currentPage} of {totalPages} </span></div>
+                        <div className='column m-2'>
                             <button type="button" className="btn btn-primary" onClick={nextPage} disabled={currentPage >= totalPages}>Next</button>
                         </div>
                     </tr>
-                </tfoot>
-            </table>
         </div>
     );
 }

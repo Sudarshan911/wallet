@@ -85,7 +85,7 @@ export default function Transactions() {
                     />
                     {errors.description && <div className="invalid-feedback">{errors.description}</div>}
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={!isValid}>
+                <button type="submit" className="btn btn-primary mb-3" disabled={!isValid}>
                     Submit Transaction
                 </button>
             </form>
@@ -94,12 +94,6 @@ export default function Transactions() {
                     {submitError}
                 </div>
             )}
-            <p>
-                <Link to={`/wallet/${walletId}`}>Go back to Wallet Info</Link>
-            </p>
-            <p>
-                <Link to={`/wallet/${walletId}/transactionList`}>Go to Wallet Transactions</Link>
-            </p>
         </div>
     );
 }

@@ -44,7 +44,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
-    <div className='' id='index'>
+    <div className='bg-secondary' id='index'>
       <RouterProvider router={router} />
       </div>
   // </React.StrictMode>
