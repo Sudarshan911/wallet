@@ -15,7 +15,6 @@ const actionTypes = {
 };
 
 const formReducer = (state, action) => {
-  console.log(state, action);
   switch (action.type) {
     case actionTypes.SET_FORM_DATA:
       return { ...state, formData: { ...state.formData, ...action.payload } };
@@ -37,12 +36,10 @@ const useForm = (initialFormState, validationConfig) => {
   });
 
   const handleChange = (event) => {
-    console.log(event.target.name);
-    console.log(validationConfig);
+
     const { name, value } = event.target;
     dispatch({ type: actionTypes.SET_FORM_DATA, payload: { [name]: value } });
     const validationErrors = validateForm({ ...state.formData, [name]: value }, validationConfig[name], name);
-    console.log(validationErrors);
     dispatch({ type: actionTypes.SET_ERRORS, payload: validationErrors });
     dispatch({ type: actionTypes.SET_IS_VALID, payload: Object.keys(validationErrors).length === 0 });
   };
@@ -51,20 +48,27 @@ const useForm = (initialFormState, validationConfig) => {
 };
 
 const validateForm = (data, validationRules, currentEvent) => {
-  console.log(data, validationRules);
   const errors = {};
 
-  if (validationRules?.required && !data[currentEvent].trim()) {
+  if (validationRules?.required && !data[currentEvent]) {
     errors[currentEvent] = 'This field is required.';
   }
+
+  if (validationRules?.positive && data[currentEvent] <= 0) {
+    errors[currentEvent] = 'Please enter a positive number.';
+  }
+
+  
+
   if (validationRules?.type === 'number' && (isNaN(data[currentEvent]) || data[currentEvent] === '')) {
+    errors[currentEvent] = 'Must be a number.';
+  }
+  if (validationRules?.type === 'number' && (isNaN(data[currentEvent]) || data[currentEvent] === '')  ) {
     errors[currentEvent] = 'Must be a number.';
   }
   if (validationRules?.type === 'number' && data[currentEvent].toString().split('.')[1]?.length > 4  ) {
     errors[currentEvent] = 'Maximum prcision limit is 4.';
   }
-
-console.log(errors);
   return errors;
 };
 

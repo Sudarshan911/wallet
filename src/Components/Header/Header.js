@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import './Header.css'
 import {
   Link
 } from "react-router-dom";
+import { walletIdContext } from "../../Context/walletContext";
+
 export default function Header() { 
-  const  walletId  = (localStorage.getItem('walletId')) ? JSON.parse(localStorage.getItem('walletId')) : null
-  console.log(walletId);
+  // const walletId = (localStorage.getItem('walletId')) ? JSON.parse(localStorage.getItem('walletId')) : null
+  const  {walletId}  = useContext(walletIdContext);
     return <nav className="navbar navbar-expand-sm bg-dark navbar-dark ">
     <div className="container-fluid">
       <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,7 +16,7 @@ export default function Header() {
       <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
-            <Link className="nav-link"  to="/home">Wallet</Link>
+            <Link className="nav-link"  to="/">Wallet</Link>
             </li>
             {walletId && <li className="nav-item">
             <Link className="nav-link"  to={`/wallet/${walletId}/transactions`}>Transact</Link>

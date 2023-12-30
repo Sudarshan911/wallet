@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useForm from '../../Hooks/UseFormBackup';
+import useForm from '../../Hooks/UseForm';
 import axios from 'axios';
+import { walletIdContext } from '../../Context/walletContext';
 
 export default function UserInput() {
     const navigate = useNavigate();
+    const  {setWalletId}  = useContext(walletIdContext);
+
     const { formData, errors, isValid, submitError, handleChange, dispatch } = useForm(
         {
             name: '',
@@ -12,13 +15,13 @@ export default function UserInput() {
         },
         {
             name: { required: true },
-            amount: { type: 'number' },
+            amount: { type: 'number', positive:true },
         }
     );
 
     const handleWalletInitialized = (newWalletId) => {
         // Navigate to the WalletInfo page with the new walletId
-        console.log(newWalletId);
+        setWalletId(newWalletId);
         navigate(`/wallet/${newWalletId}`);
     };
     const handleSubmit = async (event) => {
@@ -34,10 +37,9 @@ export default function UserInput() {
             });
 
             const walletData = await axios.post(
-                process.env.REACT_APP_API_BASE_URL + 'wallet',
+                process.env.REACT_APP_API_BASE_URL + 'setup',
                 requestBody
             );
-            console.log(walletData.data._id);
             localStorage.setItem('walletId', JSON.stringify(walletData.data._id));
             dispatch({ type: 'SET_IS_VALID', payload: true });
             dispatch({ type: 'SET_SUBMIT_ERROR', payload: null }); // Clear any previous submission errors
@@ -60,7 +62,7 @@ export default function UserInput() {
     };
 
     return (
-        <div className="container p-4 bg-dark text-white">
+        <div className="container p-4 bg-dark text-white mt-3">
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="walletName" className="form-label">

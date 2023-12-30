@@ -1,22 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import useForm from '../../Hooks/UseFormBackup';
+import useForm from '../../Hooks/UseForm';
+import './Transactions.css'
 
 export default function Transactions() {
     const { walletId } = useParams();
     const navigate = useNavigate();
+    const [transactionType, setTransactionType] = useState('Credit');
 
     const { formData, submitError, handleChange, dispatch, isValid, errors } = useForm(
         {
             transactionAmount: '',
             description: '',
+            transactionType: '',
         },
         {
-            transactionAmount: { type: 'number', required: true },
-            description: {required: true}
+            transactionAmount: { type: 'number', required: true, positive: true },
+            description: { required: true }
         }
     );
+
+    function handleTransactionType() { 
+        setTransactionType((pre)=> (pre === 'Credit') ? 'Debit' : 'Credit')
+    }
 
     const handleSubmit = async (event) => {
         try {
@@ -24,6 +31,7 @@ export default function Transactions() {
             const transactionData = {
                 amount: parseFloat(formData.transactionAmount),
                 description: formData.description,
+                transactionType: transactionType
             };
 
             await axios.post(
@@ -31,30 +39,29 @@ export default function Transactions() {
                 transactionData
             );
             navigate(`/wallet/${walletId}`);
-
         } catch (error) {
             if (error.response) {
-              console.error('Server Error:', error.response.status, error.response.data);
+                console.error('Server Error:', error.response.status, error.response.data);
                 dispatch({ type: 'SET_SUBMIT_ERROR', payload: `Server Error: ${error.response.status}` });
                 dispatch({ type: 'SET_IS_VALID', payload: true });
             } else if (error.request) {
-              console.error('No response received:', error.request);
+                console.error('No response received:', error.request);
                 dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'No response received from the server.' });
                 dispatch({ type: 'SET_IS_VALID', payload: true });
             } else {
-              console.error('Request setup error:', error.message);
-              dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'Error setting up the request.' });
+                console.error('Request setup error:', error.message);
+                dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'Error setting up the request.' });
             }
             dispatch({ type: 'SET_IS_VALID', payload: false });
-          }
+        }
     };
 
     return (
         <div className="container p-4 ">
-            <h2>Transactions</h2>
+            <h2 className='text-center'>Transactions</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="transactionAmount" className="form-label">
+                    <label htmlFor="transactionAmount" className="form-label text-warning">
                         Transaction Amount
                     </label>
                     <input
@@ -64,13 +71,14 @@ export default function Transactions() {
                         onChange={handleChange}
                         name="transactionAmount"
                         placeholder="Enter transaction amount"
+                        min="0"
                         required
                     />
                     {errors.transactionAmount && <div className="invalid-feedback">{errors.transactionAmount}</div>}
 
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="walletName" className="form-label">
+                    <label htmlFor="walletName" className="form-label text-warning">
                         Description
                     </label>
                     <input
@@ -83,6 +91,10 @@ export default function Transactions() {
                         required
                     />
                     {errors.description && <div className="invalid-feedback">{errors.description}</div>}
+                </div>
+                <div className="form-check form-switch form-switch-md">
+                    <input className="form-check-input me-2" type="checkbox" role='switch' onChange={handleTransactionType}  id="transactionType" />
+                    <label className="form-check-label m-1 text-info" htmlFor="transactionType">{transactionType }</label>
                 </div>
                 <button type="submit" className="btn btn-primary mb-3" disabled={!isValid}>
                     Submit Transaction

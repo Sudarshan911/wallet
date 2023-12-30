@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { CSVLink } from "react-csv";
 import { useParams } from 'react-router-dom';
 import './TransactionList.css'
 
@@ -13,10 +14,11 @@ export default function TransactionsList() {
     const [sortBy, setSortBy] = useState('createdAt'); // Default sorting by date
     const [orderBy, setOrderBy] = useState('desc');
     const [limit, setLimit] = useState(process.env.REACT_APP_PER_PAGE_LIMIT);
+    const [csvData, setCsvData] = useState([]);
 
     useEffect(() => {
         fetchTransactions(currentPage);
-    }, [currentPage,sortBy, orderBy,limit]);
+    }, [currentPage, sortBy, orderBy, limit]);
 
 
     const fetchTransactions = async (nextPage) => {
@@ -33,7 +35,11 @@ export default function TransactionsList() {
             }
             );
             setTransactions(response.data.data);
-            setTotalPages(Math.ceil(response.data.totalRecords /limit))
+            setTotalPages(Math.ceil(response.data.totalRecords / limit));
+            if (limit === 'all') {
+                setLimit(response.data.totalRecords)
+            }
+            setCsvData(response.data.data);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching transactions:', error.message);
@@ -41,6 +47,7 @@ export default function TransactionsList() {
             setLoading(false);
         }
     };
+
 
 
     if (loading) {
@@ -52,7 +59,7 @@ export default function TransactionsList() {
     }
 
     if (transactions.length === 0) {
-        return <p>No transactions available for this wallet.</p>;
+        return <p className='text-center'>No transactions available for this wallet.</p>;
     }
 
     function previousPage() {
@@ -70,52 +77,59 @@ export default function TransactionsList() {
     const handleOrderByChange = (event) => {
         setOrderBy(event.target.value);
     };
-    
+
     const handleLimitChange = (event) => {
         setLimit(event.target.value);
+        setCurrentPage(1);
     };
 
     return (
         <div className="container mt-5">
-            
-            <div className="d-flex justify-content-end m-3">
-                
-            <div className="m-2 align-bottom">
-              <p className='text-info font-weight-bold'>Sort and OrderBy</p>  
-                </div>
-                <div className="m-2">
-                    <select value={sortBy} onChange={handleSortByChange}>
-                        <option value="createdAt">Date</option>
-                        <option value="amount">Amount</option>
-                    </select>
-                </div>
-                <div className="m-2">
-                    <select value={orderBy} onChange={handleOrderByChange}>
-                        <option value="desc">Descending</option>
-                        <option value="asc">Ascending</option>
-                    </select>
-                </div>
-
-                <div className="m-2 align-bottom">
-
-                    <p className='text-info font-weight-bold'>Limit</p>  
+            <div className="d-flex justify-content-between align-items-center mb-0">
+                <div className="d-flex align-items-center">
+                    <div className="m-2">
+                        <p className="text-info font-weight-bold">Sort and OrderBy</p>
                     </div>
-                <div className="m-2">
-                    <select value={limit} onChange={handleLimitChange}>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                    </select>
+                    <div className="m-2 align-self-start">
+                        <select value={sortBy} onChange={handleSortByChange}>
+                            <option value="createdAt">Date</option>
+                            <option value="amount">Amount</option>
+                        </select>
+                    </div>
+                    <div className="m-2 align-self-start">
+                        <select value={orderBy} onChange={handleOrderByChange}>
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
+                    </div>
+                    <div className="m-2 align-bottom">
+                        <p className="text-info font-weight-bold">Limit</p>
+                    </div>
+                    <div className="m-2 align-self-start">
+                        <select value={limit} onChange={handleLimitChange}>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="all">all</option>
+                        </select>
+                    </div>
                 </div>
 
+                {csvData.length > 0 && (
+                    <div className="ml-auto align-self-start">
+                        <CSVLink className="btn btn-primary" filename="my-file.csv" data={csvData}>
+                            Export to CSV
+                        </CSVLink>
+                    </div>
+                )}
             </div>
+
 
             <h2 className='text-center mb-3 text-warning'>Transactions History</h2>
             <table className="table table-striped table-responsive">
                 <thead>
                     <tr>
                         <th>Date</th>
-                        {/* <th>WalletId</th> */}
                         <th>Amount</th>
                         <th>Balance</th>
                         <th>Description</th>
@@ -126,7 +140,6 @@ export default function TransactionsList() {
                     {transactions.map((transaction) => (
                         <tr key={transaction._id}>
                             <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-                            {/* <td>{transaction.walletId}</td> */}
                             <td>{transaction.amount.toFixed(4)}</td>
                             <td>{transaction.newBalance.toFixed(4)}</td>
                             <td>{transaction.description}</td>
@@ -136,14 +149,14 @@ export default function TransactionsList() {
                 </tbody>
             </table>
             <tr className='d-flex bg-secondary justify-content-center'>
-                        <div className='column m-2'>
-                            <button type="button" className="btn btn-primary" onClick={previousPage} disabled={currentPage <= 1}>Previous</button>
-                        </div>
-                        <div className='pt-2 m-2'>  <span>  {currentPage} of {totalPages} </span></div>
-                        <div className='column m-2'>
-                            <button type="button" className="btn btn-primary" onClick={nextPage} disabled={currentPage >= totalPages}>Next</button>
-                        </div>
-                    </tr>
+                <div className='column m-2'>
+                    <button type="button" className="btn btn-primary" onClick={previousPage} disabled={currentPage <= 1}>Previous</button>
+                </div>
+                <div className='pt-2 m-2'>  <span>  {currentPage} of {totalPages} </span></div>
+                <div className='column m-2'>
+                    <button type="button" className="btn btn-primary" onClick={nextPage} disabled={currentPage >= totalPages}>Next</button>
+                </div>
+            </tr>
         </div>
     );
 }
