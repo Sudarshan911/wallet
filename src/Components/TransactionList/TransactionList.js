@@ -51,7 +51,7 @@ export default function TransactionsList() {
 
 
     if (loading) {
-        return <p>Loading transactions...</p>;
+        return <div className='row justify-content-center mt-5'>  <div className="loader "></div> </div>;
     }
 
     if (error) {
