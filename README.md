@@ -23,3 +23,5 @@ The page will reload when you make changes.\
 5. A custom hook "useForm" is used to manage form validation related operations (managing state of whole form). Its used in WalletInputForm and Transaction component
 6. Context Api is used to maintain the state (walletId).
 7. The pagination logic is handled on server side.
+
+# Demo video is placed in root directory (WalletDemo.mkv)
