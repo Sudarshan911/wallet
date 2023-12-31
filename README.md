@@ -4,7 +4,8 @@ Its free hosting service, so it will spin down with inactivity. It may take some
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-===================================================Steps to run the project=========================================================
+## Steps to run the project
+
 1. npm i
 2. npm run start
 
@@ -13,7 +14,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 
-===================================================Project structure=========================================================
+## Project structure
 
 1. react-router-dom is used for client side routing.
 2. Bootstrap 5 is used for styling.
