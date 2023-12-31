@@ -6,7 +6,6 @@ import {
 import { walletIdContext } from "../../Context/walletContext";
 
 export default function Header() { 
-  // const walletId = (localStorage.getItem('walletId')) ? JSON.parse(localStorage.getItem('walletId')) : null
   const  {walletId}  = useContext(walletIdContext);
     return <nav className="navbar navbar-expand-sm bg-dark navbar-dark ">
     <div className="container-fluid">

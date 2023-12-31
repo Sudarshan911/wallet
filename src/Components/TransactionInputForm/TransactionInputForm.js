@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import useForm from '../../Hooks/UseForm';
-import './Transactions.css'
+import './TransactionInputForm.css'
 
 export default function Transactions() {
     const { walletId } = useParams();
     const navigate = useNavigate();
     const [transactionType, setTransactionType] = useState('Credit');
+    const [loading, setLoading] = useState(false);
 
     const { formData, submitError, handleChange, dispatch, isValid, errors } = useForm(
         {
@@ -24,10 +25,14 @@ export default function Transactions() {
     function handleTransactionType() { 
         setTransactionType((pre)=> (pre === 'Credit') ? 'Debit' : 'Credit')
     }
+    if (loading) {
+        return <div className='row justify-content-center mt-5'>  <div className="loader "></div> </div>;
+    }
 
     const handleSubmit = async (event) => {
         try {
             event.preventDefault();
+            setLoading(true);
             const transactionData = {
                 amount: parseFloat(formData.transactionAmount),
                 description: formData.description,
@@ -38,6 +43,7 @@ export default function Transactions() {
                 `${process.env.REACT_APP_API_BASE_URL}transact/${walletId}`,
                 transactionData
             );
+            setLoading(false);
             navigate(`/wallet/${walletId}`);
         } catch (error) {
             if (error.response) {

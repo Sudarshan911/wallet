@@ -4,7 +4,7 @@ import useForm from '../../Hooks/UseForm';
 import axios from 'axios';
 import { walletIdContext } from '../../Context/walletContext';
 
-export default function UserInput() {
+export default function WalletInputForm() {
     const navigate = useNavigate();
     const  {setWalletId}  = useContext(walletIdContext);
 

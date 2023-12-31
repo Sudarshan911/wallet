@@ -7,9 +7,8 @@ import {
 import "./index.css";
 import App from './App';
 import ErrorPage from './Components/ErrorPage/ErrorPage';
-import UserInput from './Components/UserInput/UserInput';
 import WalletInfo from './Components/Wallet/Wallet';
-import Transactions from './Components/Transactions/Transactions';
+import Transactions from './Components/TransactionInputForm/TransactionInputForm';
 import TransactionsList from './Components/TransactionList/TransactionList';
 import Home from './Components/Home/Home';
 const router = createBrowserRouter([
