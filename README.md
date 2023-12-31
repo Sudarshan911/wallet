@@ -1,5 +1,7 @@
 App URL :     https://wallet-frontend.onrender.com/
 
+Its free hosting service, so it will spin down with inactivity. It may take some time to initialise the server on first hit.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ===================================================Steps to run the project=========================================================
