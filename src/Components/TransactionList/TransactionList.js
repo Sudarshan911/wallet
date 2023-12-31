@@ -23,6 +23,7 @@ export default function TransactionsList() {
 
     const fetchTransactions = async (nextPage) => {
         try {
+            setLoading(true);
             const response = await axios.get(
                 `${process.env.REACT_APP_API_BASE_URL}transactions`, {
                 params: {
