@@ -46,6 +46,7 @@ export default function Transactions() {
             setLoading(false);
             navigate(`/wallet/${walletId}`);
         } catch (error) {
+            setLoading(false);
             if (error.response) {
                 console.error('Server Error:', error.response.status, error.response.data);
                 dispatch({ type: 'SET_SUBMIT_ERROR', payload: `Server Error: ${error.response.status}` });

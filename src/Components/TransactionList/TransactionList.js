@@ -117,7 +117,7 @@ export default function TransactionsList() {
 
                 {csvData.length > 0 && (
                     <div className="ml-auto align-self-start">
-                        <CSVLink className="btn btn-primary" filename="my-file.csv" data={csvData}>
+                        <CSVLink className="btn btn-primary" filename="WalletTransactions.csv" data={csvData}>
                             Export to CSV
                         </CSVLink>
                     </div>

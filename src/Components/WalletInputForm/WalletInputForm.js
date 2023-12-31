@@ -45,6 +45,7 @@ export default function WalletInputForm() {
             dispatch({ type: 'SET_SUBMIT_ERROR', payload: null }); // Clear any previous submission errors
             handleWalletInitialized(walletData.data._id);
         } catch (error) {
+            setLoading(false);
             if (error.response) {
                 console.error('Server Error:', error.response.status, error.response.data);
                 dispatch({ type: 'SET_SUBMIT_ERROR', payload: `Server Error: ${error.response.status}` });
