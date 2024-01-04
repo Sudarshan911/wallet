@@ -18,7 +18,7 @@ export default function WalletInfo() {
   }, [walletId]);
 
   if (!walletData) {
-    return <div className='row justify-content-center mt-5'>  <div className="loader "></div> </div>;
+    return <div className='d-flex justify-content-center mt-5'>  <div className="loader "></div> </div>;
 }
 
   return (

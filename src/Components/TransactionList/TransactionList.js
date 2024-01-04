@@ -52,7 +52,7 @@ export default function TransactionsList() {
 
 
     if (loading) {
-        return <div className='row justify-content-center mt-5'>  <div className="loader "></div> </div>;
+        return <div className='d-flex justify-content-center mt-5'>  <div className="loader "></div> </div>;
     }
 
     if (error) {
