@@ -141,15 +141,15 @@ export default function TransactionsList() {
                     {transactions.map((transaction) => (
                         <tr key={transaction._id}>
                             <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-                            <td>{transaction.amount.toFixed(4)}</td>
-                            <td>{transaction.newBalance.toFixed(4)}</td>
+                            <td>{transaction.amount.toFixed(2)}</td>
+                            <td>{transaction.newBalance.toFixed(2)}</td>
                             <td>{transaction.description}</td>
                             <td>{transaction.type}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <tr className='d-flex bg-secondary justify-content-center'>
+            <tr className='d-flex justify-content-center'>
                 <div className='column m-2'>
                     <button type="button" className="btn btn-primary" onClick={previousPage} disabled={currentPage <= 1}>Previous</button>
                 </div>

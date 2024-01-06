@@ -19,27 +19,29 @@ export default function WalletInfo() {
 
   if (!walletData) {
     return <div className='d-flex justify-content-center mt-5'>  <div className="loader "></div> </div>;
-}
+  }
 
   return (
-    <div className="container m-y-5 p-5">
-        < div className="card">
-            <>
-              <div className="card-header bg-dark text-white text-center">
-                <p className="display-4 mb-0">Hello {walletData.name},</p>
-              </div>
-              <div className="card-body text-center text-white bg-dark">
-                <>
-                  <p className="display-5">
-                    <strong>Balance:</strong> {walletData.balance.toFixed(4)}
-                  </p>
-                  <Link to={`/wallet/${walletId}/transactions`} className="btn btn-primary">
-                    Create Transaction
-                  </Link>
-                </>
-              </div>
-            </>   
+    <div>
+      <div className="container m-y-5 p-5 w-40 d-flex justify-content-center">
+        <div className="card">
+          <>
+            <div className=" text-black text-center wallet-user">
+              <p className="display-4 mb-0">Hello <strong>{walletData.name},</strong> </p>
+            </div>
+            <div className=" text-center text-black">
+              <>
+                <p className="display-5  wallet-balance">
+                  <strong>Balance:</strong> {walletData.balance.toFixed(2)}
+                </p>
+                <Link to={`/wallet/${walletId}/transactions`} className="btn  transact-button">
+                  Create Transaction
+                </Link>
+              </>
+            </div>
+          </>
         </div>
+      </div>
     </div>
   );
 }

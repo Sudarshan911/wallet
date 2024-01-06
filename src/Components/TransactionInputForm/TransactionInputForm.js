@@ -64,7 +64,7 @@ export default function Transactions() {
     };
 
     return (
-        <div className="container p-4 ">
+        <div className="container p-4 w-50">
             <h2 className='text-center'>Transactions</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -73,6 +73,7 @@ export default function Transactions() {
                     </label>
                     <input
                         type="number"
+                        step="any"
                         className={`form-control ${errors.transactionAmount ? 'is-invalid' : ''}`}
                         value={formData.transactionAmount}
                         onChange={handleChange}

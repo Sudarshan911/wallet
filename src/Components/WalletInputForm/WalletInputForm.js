@@ -63,10 +63,10 @@ export default function WalletInputForm() {
     };
 
     return (
-        <div className="container p-4 bg-dark text-white mt-3">
+        <div className="container p-4 text-warning mt-3">
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="walletName" className="form-label">
+                    <label htmlFor="walletName" className="form-label required">
                         UserName
                     </label>
                     <input
@@ -86,6 +86,7 @@ export default function WalletInputForm() {
                     </label>
                     <input
                         type="number"
+                        step="any"
                         className={`form-control ${errors.amount ? 'is-invalid' : ''}`}
                         value={formData.amount}
                         name="amount"

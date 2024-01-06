@@ -1,4 +1,37 @@
 .card{
-    border: solid chartreuse 2px;
-    border-radius: 20%;
+    width: 50%;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.wallet-user {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.wallet-balance {
+    font-size: 36px;
+    font-weight: bold;
+    color: #27ae60;
+    margin-bottom: 20px;
+}
+
+.transact-button {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.transact-button:hover {
+    background-color: #2980b9;
 }

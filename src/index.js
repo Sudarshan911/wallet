@@ -39,7 +39,7 @@ const router = createBrowserRouter([
   },
   ]);
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <div className='bg-secondary' id='index'>
+    <div id='index'>
       <RouterProvider router={router} />
     </div>
 );

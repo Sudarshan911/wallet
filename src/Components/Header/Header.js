@@ -7,7 +7,7 @@ import { walletIdContext } from "../../Context/walletContext";
 
 export default function Header() { 
   const  {walletId}  = useContext(walletIdContext);
-    return <nav className="navbar navbar-expand-sm bg-dark navbar-dark ">
+    return <nav className="navbar navbar-expand-sm bg-black navbar-dark ">
     <div className="container-fluid">
       <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
