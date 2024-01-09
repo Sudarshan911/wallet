@@ -133,9 +133,9 @@ export default function TransactionsList() {
                     <tr>
                         <th>Date</th>
                         <th>Amount</th>
-                        <th>Balance</th>
                         <th>Description</th>
                         <th>Type</th>
+                        <th>Updated Balance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -143,9 +143,9 @@ export default function TransactionsList() {
                         <tr key={transaction._id}>
                             <td>{new Date(transaction.createdAt).toLocaleString()}</td>
                             <td>{transaction.amount.toFixed(2)}</td>
-                            <td>{transaction.newBalance.toFixed(2)}</td>
                             <td>{transaction.description}</td>
                             <td>{transaction.type}</td>
+                            <td>{transaction.newBalance.toFixed(2)}</td>
                         </tr>
                     ))}
                 </tbody>
