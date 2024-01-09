@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Wallet.css'
+import Loader from '../Loader/Loader';
 
 export default function WalletInfo() {
   const [walletData, setWalletData] = useState(null);
@@ -18,8 +19,8 @@ export default function WalletInfo() {
   }, [walletId]);
 
   if (!walletData) {
-    return <div className='d-flex justify-content-center mt-5'>  <div className="loader "></div> </div>;
-  }
+    return <Loader/>;
+}
 
   return (
     <div>

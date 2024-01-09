@@ -3,6 +3,11 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import useForm from '../../Hooks/UseForm';
 import './TransactionInputForm.css'
+import { utilityConstants } from '../../Utils/constants';
+import { Input } from '../Shared/Input/Input';
+import { VALIDATOR_MAX_PRECISION, VALIDATOR_MIN, VALIDATOR_REQUIRE } from '../../Utils/validators';
+import Loader from '../Loader/Loader';
+import CommonErrors from '../CommonErrors/CommonErrors';
 
 export default function Transactions() {
     const { walletId } = useParams();
@@ -10,32 +15,33 @@ export default function Transactions() {
     const [transactionType, setTransactionType] = useState('Credit');
     const [loading, setLoading] = useState(false);
 
-    const { formData, submitError, handleChange, dispatch, isValid, errors } = useForm(
-        {
-            transactionAmount: '',
-            description: '',
-            transactionType: '',
+    const[dispatch, onInput, formState] = useForm({
+        inputs: {
+            description: {
+                value: '',
+                isValid: false
+            },
+            transactionAmount: {
+                value: '',
+                isValid: false
+            }
         },
-        {
-            transactionAmount: { type: 'number', required: true, positive: true },
-            description: { required: true }
-        }
-    );
+        submitError: false
+    })
 
-    function handleTransactionType() { 
-        setTransactionType((pre)=> (pre === 'Credit') ? 'Debit' : 'Credit')
+    function handleTransactionType() {
+        setTransactionType((pre) => (pre === 'Credit') ? 'Debit' : 'Credit')
     }
     if (loading) {
-        return <div className='row justify-content-center mt-5'>  <div className="loader "></div> </div>;
+        return <Loader/>;
     }
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
         try {
-            event.preventDefault();
             setLoading(true);
             const transactionData = {
-                amount: parseFloat(formData.transactionAmount),
-                description: formData.description,
+                amount: parseFloat(formState.inputs['transactionAmount'].value) ,
+                description: formState.inputs['description'].value,
                 transactionType: transactionType
             };
 
@@ -46,20 +52,11 @@ export default function Transactions() {
             setLoading(false);
             navigate(`/wallet/${walletId}`);
         } catch (error) {
+            console.error(error);
+            dispatch({ type: 'SET_SUBMIT_ERROR', message: utilityConstants.getError(error) });
+        }
+        finally {
             setLoading(false);
-            if (error.response) {
-                console.error('Server Error:', error.response.status, error.response.data);
-                dispatch({ type: 'SET_SUBMIT_ERROR', payload: `Server Error: ${error.response.status}` });
-                dispatch({ type: 'SET_IS_VALID', payload: true });
-            } else if (error.request) {
-                console.error('No response received:', error.request);
-                dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'No response received from the server.' });
-                dispatch({ type: 'SET_IS_VALID', payload: true });
-            } else {
-                console.error('Request setup error:', error.message);
-                dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'Error setting up the request.' });
-            }
-            dispatch({ type: 'SET_IS_VALID', payload: false });
         }
     };
 
@@ -68,51 +65,34 @@ export default function Transactions() {
             <h2 className='text-center'>Transactions</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="transactionAmount" className="form-label text-warning">
-                        Transaction Amount
-                    </label>
-                    <input
-                        type="number"
-                        step="any"
-                        className={`form-control ${errors.transactionAmount ? 'is-invalid' : ''}`}
-                        value={formData.transactionAmount}
-                        onChange={handleChange}
-                        name="transactionAmount"
-                        placeholder="Enter transaction amount"
-                        min="0"
-                        required
+                    <Input type='number'
+                        id='transactionAmount'
+                        label="Transaction Amount"
+                        placeholder="Enter transaction amount."
+                        validators={[VALIDATOR_REQUIRE(), VALIDATOR_MAX_PRECISION(4), VALIDATOR_MIN(0)]}
+                        onInput={onInput}
                     />
-                    {errors.transactionAmount && <div className="invalid-feedback">{errors.transactionAmount}</div>}
+
+                    <Input type='text'
+                        id='description'
+                        label="Description"
+                        placeholder="Please enter description."
+                        validators={[VALIDATOR_REQUIRE()]}
+                        onInput={onInput}
+                    />
 
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="walletName" className="form-label text-warning">
-                        Description
-                    </label>
-                    <input
-                        type="text"
-                        className={`form-control ${errors.description ? 'is-invalid' : ''}`}
-                        value={formData.description}
-                        name="description"
-                        onChange={handleChange}
-                        placeholder="Please enter description."
-                        required
-                    />
-                    {errors.description && <div className="invalid-feedback">{errors.description}</div>}
-                </div>
                 <div className="form-check form-switch form-switch-md">
-                    <input className="form-check-input me-2" type="checkbox" role='switch' onChange={handleTransactionType}  id="transactionType" />
-                    <label className="form-check-label m-1 text-info" htmlFor="transactionType">{transactionType }</label>
+                    <input className="form-check-input me-2" type="checkbox" role='switch' onChange={handleTransactionType} id="transactionType" />
+                    <label className="form-check-label m-1 text-info" htmlFor="transactionType">{transactionType}</label>
                 </div>
-                <button type="submit" className="btn btn-primary mb-3" disabled={!isValid}>
+                <button type="submit" className="btn btn-primary mb-3" disabled={!formState.isValid}>
                     Submit Transaction
                 </button>
             </form>
-            {submitError && (
-                <div className="alert alert-danger mt-3" role="alert">
-                    {submitError}
-                </div>
-            )}
+            {formState.submitError && (
+                <CommonErrors dispatch={dispatch} submitError={formState.submitError}  />
+            )} 
         </div>
     );
 }

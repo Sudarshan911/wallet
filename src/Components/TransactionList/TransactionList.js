@@ -3,6 +3,7 @@ import axios from 'axios';
 import { CSVLink } from "react-csv";
 import { useParams } from 'react-router-dom';
 import './TransactionList.css'
+import Loader from '../Loader/Loader';
 
 export default function TransactionsList() {
     const { walletId } = useParams();
@@ -52,7 +53,7 @@ export default function TransactionsList() {
 
 
     if (loading) {
-        return <div className='d-flex justify-content-center mt-5'>  <div className="loader "></div> </div>;
+        return <Loader/>;
     }
 
     if (error) {

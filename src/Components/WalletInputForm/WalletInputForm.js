@@ -1,109 +1,95 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useForm from '../../Hooks/UseForm';
 import axios from 'axios';
 import { walletIdContext } from '../../Context/walletContext';
+import { Input } from '../Shared/Input/Input';
+import { VALIDATOR_MAX_PRECISION, VALIDATOR_MIN, VALIDATOR_REQUIRE } from '../../Utils/validators';
+import Loader from '../Loader/Loader';
+import { utilityConstants } from '../../Utils/constants';
+import CommonErrors from '../CommonErrors/CommonErrors';
 
 export default function WalletInputForm() {
     const navigate = useNavigate();
-    const  {setWalletId}  = useContext(walletIdContext);
-
-    const { formData, errors, isValid, submitError, handleChange, dispatch } = useForm(
-        {
-            name: '',
-            amount: '',
+    const { setWalletId } = useContext(walletIdContext);
+    const [loading, setLoading] = useState(false);
+   const[dispatch, onInput, formState] = useForm({
+        inputs: {
+            name: {
+                value: '',
+                isValid: false
+            },
+            amount: {
+                value: '',
+                isValid: false
+            }
         },
-        {
-            name: { required: true },
-            amount: { type: 'number', positive:true },
-        }
-    );
+        submitError: false
+    })
 
     const handleWalletInitialized = (newWalletId) => {
         // Navigate to the WalletInfo page with the new walletId
         setWalletId(newWalletId);
         navigate(`/wallet/${newWalletId}`);
     };
+
     const handleSubmit = async (event) => {
         try {
-            event.preventDefault();
             const requestBody = {};
-
-            Object.entries(formData).forEach(([key, value]) => {
-                // Exclude fields with empty or null values
-                if (value !== '' && value !== null) {
-                    requestBody[key] = value;
+            for (let input in formState.inputs) { 
+                if ( formState.inputs[input].value) {
+                    requestBody[input] = formState.inputs[input].value
                 }
-            });
-
+            }
+            setLoading(true)
             const walletData = await axios.post(
                 process.env.REACT_APP_API_BASE_URL + 'setup',
                 requestBody
             );
+            setLoading(false)
             localStorage.setItem('walletId', JSON.stringify(walletData.data._id));
-            dispatch({ type: 'SET_IS_VALID', payload: true });
-            dispatch({ type: 'SET_SUBMIT_ERROR', payload: null }); // Clear any previous submission errors
             handleWalletInitialized(walletData.data._id);
         } catch (error) {
-            setLoading(false);
-            if (error.response) {
-                console.error('Server Error:', error.response.status, error.response.data);
-                dispatch({ type: 'SET_SUBMIT_ERROR', payload: `Server Error: ${error.response.status}` });
-                dispatch({ type: 'SET_IS_VALID', payload: true });
-            } else if (error.request) {
-                console.error('No response received:', error.request);
-                dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'No response received from the server.' });
-                dispatch({ type: 'SET_IS_VALID', payload: true });
-            } else {
-                console.error('Request setup error:', error.message);
-                dispatch({ type: 'SET_SUBMIT_ERROR', payload: 'Error setting up the request.' });
-            }
-            dispatch({ type: 'SET_IS_VALID', payload: false });
+            console.error(error);
+            dispatch({ type: 'SET_SUBMIT_ERROR', message: utilityConstants.getError(error) });
+        }
+        finally {
+            setLoading(false)
         }
     };
 
+    if (loading) {
+        return <Loader/>;
+    }
+
     return (
-        <div className="container p-4 text-warning mt-3">
-            <form onSubmit={handleSubmit}>
+        <div className="container p-4 text-warning mt-3 w-50">
+            <form onSubmit={handleSubmit} >
                 <div className="mb-3">
-                    <label htmlFor="walletName" className="form-label required">
-                        UserName
-                    </label>
-                    <input
-                        type="text"
-                        className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                        value={formData.name}
-                        name="name"
-                        onChange={handleChange}
+                    <Input type='text'
+                        id='name'
+                        label="UserName"
                         placeholder="Please enter your username."
-                        required
+                        validators={[VALIDATOR_REQUIRE()]}
+                        onInput={onInput}
                     />
-                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="walletAmount" className="form-label">
-                        Initial Balance
-                    </label>
-                    <input
-                        type="number"
-                        step="any"
-                        className={`form-control ${errors.amount ? 'is-invalid' : ''}`}
-                        value={formData.amount}
-                        name="amount"
-                        onChange={handleChange}
+                    <Input
+                        type='number'
+                        id='amount'
+                        label="Initial Balance"
                         placeholder="Please enter your opening balance."
+                        validators={[ VALIDATOR_MAX_PRECISION(4), VALIDATOR_MIN(0)]}
+                        onInput={onInput}
                     />
-                    {errors.amount && <div className="invalid-feedback">{errors.amount}</div>}
+
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={!isValid}>
+                <button type="submit" className="btn btn-primary" disabled={!formState.isValid}>
                     Submit
                 </button>
             </form>
-            {submitError && (
-                <div className="alert alert-danger mt-3" role="alert">
-                    {submitError}
-                </div>
-            )}
+             {formState.submitError && (
+                <CommonErrors dispatch={dispatch} submitError={formState.submitError}  />
+            )} 
         </div>
     );
 }
